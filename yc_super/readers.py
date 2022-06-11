@@ -1,17 +1,18 @@
 from pathlib import Path
 from yc_super.superdata import SuperData
+from yc_super.yearquarter import YearQuarter
 
 import pandas as pd
 
 class UncodedPaySlipWarning(Warning):
     pass
 
-def is_ote(ote_treatment: str) -> bool:
-    ote_treatment = ote_treatment.lower()
-    if ote_treatment not in ['ote', 'not_ote']:
-        raise ValueError(f"Invalid ote_treatment {ote_treatment}")
+def is_ote(ote_description: str) -> bool:
+    ote_description = ote_description.lower()
+    if ote_description not in ['ote', 'not ote']:
+        raise ValueError(f"Invalid ote_treatment {ote_description}")
     
-    return ote_treatment == 'ote'
+    return ote_description == 'ote'
 
 
 def read_combined_file(path: Path) -> SuperData:
@@ -38,8 +39,9 @@ def read_combined_file(path: Path) -> SuperData:
         # TODO: output this to an exception file
 
 
-    payments['is_ote'] = payments['ote_treatment'].apply(is_ote)
+    payments['is_ote'] = payments['ote_treament'].apply(is_ote)
 
-    payments = payments.drop(columns=['_merge', 'ote_treatment'])
+    payments = payments.drop(columns=['_merge', 'ote_treament'])
+    payments['quarter'] = payments['end'].apply(YearQuarter)
 
     return SuperData(payments=payments, disbursments=disbursments)
