@@ -135,7 +135,7 @@ def read_combined_file(path: Path) -> SuperData:
         raw_pay_slips=excel.parse('Payslips')
     )
 
-    # TODO: do something with future_disburs! log, save in SuperData for rainy day?
+    # TODO: do something with future_disburs! log, save in SuperData for rainy day? could just flag?
     disburs, future_disburs = (
         excel
         .parse('Disbursements')
