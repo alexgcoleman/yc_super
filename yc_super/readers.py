@@ -6,6 +6,8 @@ from typing import Tuple
 
 import pandas as pd
 
+WITHHELD_SUPER_CODE = 'P001 - Co. Super 9.5%'
+
 
 class UncodedPaySlipWarning(Warning):
     pass
@@ -39,6 +41,7 @@ def parse_payments(raw_pay_codes: pd.DataFrame, raw_pay_slips: pd.DataFrame) -> 
         # TODO: output this to an exception file
 
     payments['is_ote'] = payments['ote_treament'].apply(is_ote)
+    payments['is_withheld_super'] = payments['code'] == WITHHELD_SUPER_CODE
 
     payments = payments.drop(columns=['_merge', 'ote_treament'])
     payments['quarter'] = payments['end'].apply(YearQuarter)
