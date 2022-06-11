@@ -5,12 +5,37 @@ from functools import total_ordering
 
 @total_ordering
 class YearQuarter:
+    """Class which defines a financial quarter.
+
+    Can be initialised using either:
+        timestamp=pd.Timestamp
+        or
+        year=int
+        quarter=int (1-4)"""
     year: int
     quarter: int
+    start: pd.Timestamp
+    end: pd.Timestamp
+    interval: pd.Interval
 
-    def __init__(self, dt: pd.Timestamp):
-        self.year = dt.year
-        self.quarter = dt.quarter
+    def __init__(self, ts: pd.Timestamp | None = None, year=None, quarter=None):
+        if ts is not None:
+            self.year = ts.year
+            self.quarter = ts.quarter
+
+        elif year is not None and quarter is not None:
+            if quarter not in range(1, 5):
+                raise ValueError(f'Invalid quarter: {quarter}')
+            self.year = year
+            self.quarter = quarter
+
+        else:
+            raise ValueError(
+                'Must construct with either timestamp argument, or year and quarter keywords')
+
+        self.start = self._get_start()
+        self.end = self._get_end()
+        self.interval = pd.Interval(self.start, self.end, closed='both')
 
     def __str__(self) -> str:
         return f'{self.year}-Q{self.quarter}'
@@ -34,8 +59,13 @@ class YearQuarter:
         else:
             return self.quarter > other.quarter
 
-    @property
-    def start(self) -> pd.Timestamp:
+    def __contains__(self, other: object):
+        if not isinstance(other, pd.Timestamp):
+            raise NotImplementedError
+
+        return other in self.interval
+
+    def _get_start(self) -> pd.Timestamp:
         return pd.Timestamp(
             year=self.year,
             month={
@@ -45,8 +75,7 @@ class YearQuarter:
                 4: 10}[self.quarter],
             day=1)
 
-    @property
-    def end(self) -> pd.Timestamp:
+    def _get_end(self) -> pd.Timestamp:
         return pd.Timestamp(
             year=self.year,
             month={
