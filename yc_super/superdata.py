@@ -27,12 +27,9 @@ class SuperData:
         return self.payments.loc[self.payments['quarter'] == quarter].copy()
 
     def get_disbursments_for_quarter(self, quarter: YearQuarter) -> pd.DataFrame:
-        min_disburs_date = quarter.start + WINDOW_TO_PAY
-        max_disburs_date = quarter.end + WINDOW_TO_PAY
-
         return self.disburs[
-            (self.disburs['payment_made'] <= max_disburs_date)
-            & (self.disburs['payment_made'] >= min_disburs_date)
+            (self.disburs['payment_made'] -
+             WINDOW_TO_PAY).apply(lambda ts: ts in quarter)
         ]
 
     def _get_employees(self):

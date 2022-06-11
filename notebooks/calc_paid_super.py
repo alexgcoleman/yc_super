@@ -9,15 +9,22 @@ from typing import List
 
 from pathlib import Path
 
-super_file = Path('data', 'Sample Super Data.xlsx')
+DATA_PATH = Path('data', 'Sample Super Data.xlsx')
+EXAMPLE_PATH = Path('data', 'example.xlsx')
+
+super_file = EXAMPLE_PATH
 
 SUPER_PERC = 0.095
 
 super_data = read_combined_file(super_file)
 
-disburs = super_data.disburs
-payments = super_data.payments
-
+# %%
+super_data.employees
 
 # %%
-disburs
+YearQuarter(year=2022, quarter=1)
+# %%
+super_data.get_disbursments_for_quarter(
+    YearQuarter(year=2022, quarter=2)
+)
+# %%
