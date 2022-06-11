@@ -5,12 +5,30 @@ from functools import total_ordering
 
 @total_ordering
 class YearQuarter:
+    """Class which defines a financial quarter.
+
+    Can be initialised using either:
+        timestamp=pd.Timestamp
+        or
+        year=int
+        quarter=int (1-4)"""
     year: int
     quarter: int
 
-    def __init__(self, dt: pd.Timestamp):
-        self.year = dt.year
-        self.quarter = dt.quarter
+    def __init__(self, ts: pd.Timestamp | None = None, year=None, quarter=None):
+        if ts is not None:
+            self.year = ts.year
+            self.quarter = ts.quarter
+
+        elif year is not None and quarter is not None:
+            if quarter not in range(1, 5):
+                raise ValueError(f'Invalid quarter: {quarter}')
+            self.year = year
+            self.quarter = quarter
+
+        else:
+            raise ValueError(
+                'Must construct with either timestamp argument, or year and quarter keywords')
 
     def __str__(self) -> str:
         return f'{self.year}-Q{self.quarter}'
