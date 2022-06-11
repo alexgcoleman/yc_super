@@ -15,7 +15,7 @@ class YearQuarter:
         return f'{self.year}-Q{self.quarter}'
     
     def __repr__(self):
-        return f'YearQuater({self})'
+        return f'YearQuarter({self})'
 
     def __eq__(self, other: YearQuarter) -> bool:
         return (self.year == other.year) and (self.quarter == other.quarter)
