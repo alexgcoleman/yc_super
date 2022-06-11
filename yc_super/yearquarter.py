@@ -30,5 +30,31 @@ class YearQuarter:
         else:
             return self.quarter > other.quarter
 
+    @property
+    def start(self) -> pd.Timestamp:
+        return pd.Timestamp(
+            year=self.year,
+            month={
+                1: 1,
+                2: 4,
+                3: 7,
+                4: 10}[self.quarter],
+            day=1)
+
+    @property
+    def end(self) -> pd.Timestamp:
+        return pd.Timestamp(
+            year=self.year,
+            month={
+                1: 3,
+                2: 6,
+                3: 9,
+                4: 12}[self.quarter],
+            day={
+                1: 31,
+                2: 30,
+                3: 30,
+                4: 31}[self.quarter])
+
     def __hash__(self):
         return hash(repr(self))
