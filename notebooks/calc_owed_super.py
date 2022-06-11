@@ -1,8 +1,6 @@
 # %% [markdown]
 # # Calculating Owed Superannuation
 # %%
-from __future__ import annotations
-
 from yc_super.readers import read_combined_file
 from yc_super.owed import calculate_owed
 import pandas as pd
