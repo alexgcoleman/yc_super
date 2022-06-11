@@ -37,6 +37,9 @@ def read_combined_file(path: Path) -> SuperData:
         raise UncodedPaySlipWarning(f"Detected {len(uncoded_slips)} uncoded payslips!")
         # TODO: output this to an exception file
 
-    payments = payments.drop(columns=['_merge'])
+
+    payments['is_ote'] = payments['ote_treatment'].apply(is_ote)
+
+    payments = payments.drop(columns=['_merge', 'ote_treatment'])
 
     return SuperData(payments=payments, disbursments=disbursments)
