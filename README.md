@@ -54,7 +54,7 @@ employee_code quarter
 
 
 ## Implementation Notes
-- Years/Quarters are using calander years, not financial years
+- Years/Quarters are using calender years, not financial years
   - `2020-Q1` represents the interval `[2020-01-01, 2020-03-31]`
 - Disbursements are applied to a quarter using `payment_made - 28 days` ([reasoning](#what-quarter-a-disbursement-applies-to))
 - All money values are stored/manipulated internally as integer "cents"
@@ -68,13 +68,13 @@ employee_code quarter
 
 ### `SuperData`
 Object that holds disbursement and payment data
-- Convinent short-hand to bundle both sets of data together, and indicate intent with type hints
-- Would ideally implement some validators at the class level, to enforce structure of each dataframe (i.e. enforcing that all `payment` data contains an `employee_code`)
+- Convenient short-hand to bundle both sets of data together, and indicate intent with type hints
+- Would ideally implement some validators at the class level, to enforce structure of each DataFrame (i.e. enforcing that all `payment` data contains an `employee_code`)
 - Thought here is that you could implement additional parsers, and as long as they return a validated `SuperData` object then it can be used by the rest of the pipeline without any changes.
 
 
 ## Pandas Extensions - Custom Accessors
-Implemented additonal pandas accessors. Seems slightly more convinient than applying lambdas
+Implemented additional pandas accessors. Seems slightly more convenient than applying lambdas
 
 Honestly, just wanted to try it after reading [this page](https://pandas.pydata.org/docs/development/extending.html). 
 
@@ -102,4 +102,4 @@ Honestly, just wanted to try it after reading [this page](https://pandas.pydata.
 In disbursements, the columns `pay_period_from` and `pay_period_to` represent intervals of coverage for a given disbursement, with disbursement periods starting after another has ended.
   - There are some discontinuous disbursements, assuming this is due to incomplete data
   - Employee `2355`, has overlapping disbursement, with a pay period that is encompassed by its surrounding disbursements.
-  - There are also some non-continious disbursement periods for some employees (gaps in disbursement pay period coverage)
+  - There are also some non-continuous disbursement periods for some employees (gaps in disbursement pay period coverage)
