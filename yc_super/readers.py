@@ -2,8 +2,6 @@ from pathlib import Path
 from yc_super.superdata import SuperData
 from yc_super.yearquarter import YearQuarter
 
-from typing import Tuple
-
 import pandas as pd
 
 WITHHELD_SUPER_CODE = 'P001 - Co. Super 9.5%'
