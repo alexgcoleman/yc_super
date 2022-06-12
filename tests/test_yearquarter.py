@@ -85,4 +85,6 @@ def test_no_interval_overlap():
 
     for interval in yq_intervals:
         # should only overlap with itself
-        assert sum([interval.overlaps(other) for other in yq_intervals]) == 1
+        assert sum([
+            interval.overlaps(other)
+            for other in yq_intervals]) == 1
