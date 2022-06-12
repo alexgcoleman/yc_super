@@ -1,5 +1,6 @@
 import pandas as pd
 from yc_super.yearquarter import YearQuarter
+from typing import Callable
 
 WITHHELD_SUPER_CODE = 'P001 - Co. Super 9.5%'
 
@@ -16,13 +17,14 @@ class UncodedPaySlipWarning(Warning):
     pass
 
 
-def parse(raw_pay_codes: pd.DataFrame, raw_pay_slips: pd.DataFrame) -> pd.DataFrame:
-    # TODO add doc string + Define output frame structure
+def parse(
+        raw_pay_codes: pd.DataFrame,
+        raw_pay_slips: pd.DataFrame) -> pd.DataFrame:
+    """Parse raw pay codes and pay slip data, returns payments dataframe."""
 
     # adding pay codes to payslip data
     payments = raw_pay_slips.merge(
-        raw_pay_codes.rename(columns={
-            'pay_code': 'code'}),
+        raw_pay_codes.rename(columns={'pay_code': 'code'}),
         on='code',
         how='left',
         validate='m:1',  # ensure that we don't multiply payslip data
@@ -40,6 +42,6 @@ def parse(raw_pay_codes: pd.DataFrame, raw_pay_slips: pd.DataFrame) -> pd.DataFr
 
     payments = payments.drop(columns=['_merge', 'ote_treament'])
     payments['quarter'] = payments['end'].apply(YearQuarter)
-    payments['amount'] = payments['amount'].money.dollars_to_cents
+    payments['amount'] = payments['amount'].money.d_to_c
 
     return payments

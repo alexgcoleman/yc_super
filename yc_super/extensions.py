@@ -1,14 +1,15 @@
 """ Pandas Extensions """
 import pandas as pd
 import yc_super.converters as converters
+from typing import Iterable
 
 
 @pd.api.extensions.register_series_accessor("interval")
-class IntervalAccessor:
+class IntervalSeriesAccessor:
     """Custom Pandas Series accessor .interval to allow
     access to interval periods"""
 
-    def __init__(self, pandas_obj):
+    def __init__(self, pandas_obj: pd.Series):
         self._obj = pandas_obj
 
     @property
@@ -25,43 +26,67 @@ class IntervalAccessor:
 
 
 @pd.api.extensions.register_series_accessor("money")
-class MoneyAccessor:
+class MoneySeriesAccessor:
     """Custom Pandas Series accessor .money
 
     Holds methods to handle currency, heavily uses yc_super.converters"""
 
-    def __init__(self, pandas_obj):
+    def __init__(self, pandas_obj: pd.Series):
         self._obj = pandas_obj
 
     @property
-    def dollars_to_cents(self):
+    def d_to_c(self):
         """Takes input dollars (as float), and returns the 'cents' value
         as an integer. """
-        return self._obj.apply(converters.dollars_to_cents)
+        return self._obj.apply(converters.d_to_c)
 
     @property
-    def cents_to_dollars(self):
+    def c_to_d(self):
         """Takes input cents (int) and returns the 'dollar'
         value as a Decimal (to two decimal places)"""
-        return self._obj.apply(converters.cents_to_dollars)
+        return self._obj.apply(converters.c_to_d)
 
     @property
-    def cents_to_dollar_str(self):
+    def format_c_as_d(self):
         """Formats cents to a standard dollar representation $34.23"""
-        return self._obj.apply(converters.cents_to_dollar_str)
+        return self._obj.apply(converters.format_c_as_d)
 
     @property
-    def round_cents(self):
-        """Rounds Cents back to an integer"""
+    def round_c(self):
+        """Rounds Cents and converts to an integer"""
         return self._obj.round().astype('Int64')
 
 
+@pd.api.extensions.register_dataframe_accessor("money")
+class MoneyFrameAccessor:
+    """Custom Pandas DataFrame accessor .money"""
+
+    def __init__(self, pandas_obj: pd.DataFrame):
+        self._obj = pandas_obj
+
+    def format_c_as_d(self, columns: Iterable = None):
+        """Formats cents to a standard dollar representation $34.23
+
+        If no columns are given, formats all integer columns"""
+        df = self._obj.copy()
+
+        if columns is not None:
+            to_format = columns
+        else:
+            to_format = df.select_dtypes(include=['int', 'Int64']).columns
+
+        df[to_format] = df[to_format].apply(
+            lambda col: col.money.format_c_as_d)
+
+        return df
+
+
 @pd.api.extensions.register_series_accessor("yq")
-class YearQuarterAccessor:
+class YearQuarterSeriesAccessor:
     """Custom Pandas Series accessor .yq to allow
     access to interval periods"""
 
-    def __init__(self, pandas_obj):
+    def __init__(self, pandas_obj: pd.Series):
         self._obj = pandas_obj
 
     @property

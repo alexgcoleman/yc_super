@@ -1,6 +1,5 @@
 from pathlib import Path
-from yc_super.superdata import SuperData
-from yc_super.yearquarter import YearQuarter
+from yc_super.super_data import SuperData
 from yc_super.parsers import parse_disburs, parse_payments
 import pandas as pd
 
