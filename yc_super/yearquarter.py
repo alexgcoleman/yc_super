@@ -93,37 +93,3 @@ class YearQuarter:
 
     def __hash__(self):
         return hash(repr(self))
-
-
-@pd.api.extensions.register_series_accessor("yq")
-class YearQuarterAccessor:
-    """Custom Pandas Series accessor .yq to allow
-    access to interval periods"""
-
-    def __init__(self, pandas_obj):
-        self._obj = pandas_obj
-
-    @property
-    def year(self):
-        """Returns the calandar year of the YearQuarter"""
-        return self._obj.apply(lambda x: x.year)
-
-    @property
-    def quarter(self):
-        """Returns the Quarter as an integer (1-4)"""
-        return self._obj.apply(lambda x: x.quarter)
-
-    @property
-    def start(self):
-        """Returns the timestamp of the start of the YearQuarter"""
-        return self._obj.apply(lambda x: x.start)
-
-    @property
-    def end(self):
-        """Returns the timestamp of the end of the YearQuarter"""
-        return self._obj.apply(lambda x: x.end)
-
-    @property
-    def interval(self):
-        """Returns the YearQuarter as an interval"""
-        return self._obj.apply(lambda x: x.interval)
