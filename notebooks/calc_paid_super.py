@@ -19,12 +19,6 @@ SUPER_PERC = 0.095
 super_data = read_combined_file(super_file)
 
 # %%
-super_data.employees
-
-# %%
-YearQuarter(year=2022, quarter=1)
-# %%
-super_data.get_disbursments_for_quarter(
-    YearQuarter(year=2022, quarter=2)
-)
+withheld = super_data.withheld_super_per_emp_quarter()
+withheld
 # %%
