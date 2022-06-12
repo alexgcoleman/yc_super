@@ -1,10 +1,10 @@
 from pathlib import Path
 from yc_super.superdata import SuperData
 from yc_super.yearquarter import YearQuarter
+from yc_super.parsers import parse_disburs
 import pandas as pd
 
 WITHHELD_SUPER_CODE = 'P001 - Co. Super 9.5%'
-WINDOW_TO_PAY = pd.Timedelta(days=28)
 
 
 class UncodedPaySlipWarning(Warning):
@@ -48,33 +48,6 @@ def parse_payments(raw_pay_codes: pd.DataFrame, raw_pay_slips: pd.DataFrame) -> 
     return payments
 
 
-def parse_disburs(raw_disburs: pd.DataFrame) -> pd.DataFrame:
-    # TODO: add docstring + define output frame structure
-    ts_cols = ['payment_made', 'pay_period_from', 'pay_period_to']
-
-    disburs = raw_disburs.copy()
-    disburs[ts_cols] = disburs[ts_cols].apply(pd.to_datetime)
-
-    # pay period defines the interval of dates for which payslips are captured from
-    disburs['pay_period'] = disburs.apply(
-        lambda row: pd.Interval(
-            left=row['pay_period_from'],
-            right=row['pay_period_to'],
-            closed='both'), axis=1)
-
-    disburs = disburs.drop(
-        columns=['pay_period_from', 'pay_period_to']).rename(columns={
-            'sgc_amount': 'amount'
-        })
-
-    disburs['quarter'] = (disburs['payment_made'] -
-                          WINDOW_TO_PAY).apply(YearQuarter)
-
-    disburs['amount'] = disburs['amount'].money.dollars_to_cents
-
-    return disburs
-
-
 def read_combined_file(path: Path) -> SuperData:
     """Reads a combined superannuation file, and returns payslip and disbursement data"""
     excel = pd.ExcelFile(path)
@@ -84,10 +57,7 @@ def read_combined_file(path: Path) -> SuperData:
         raw_pay_slips=excel.parse('Payslips')
     )
 
-    disburs = (
-        excel
-        .parse('Disbursements')
-        .pipe(parse_disburs)
-    )
+    disburs = (excel.parse('Disbursements')
+               .pipe(parse_disburs.parse))
 
     return SuperData(payments=payments, disburs=disburs)
