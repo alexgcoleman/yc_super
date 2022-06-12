@@ -53,17 +53,30 @@ employee_code quarter
 ```
 
 
-## Calculations
+## Implementation Notes
 - Years/Quarters are using calander years, not financial years
   - `2020-Q1` represents the interval `[2020-01-01, 2020-03-31]`
-- The calculation `payment_made - 28 days` determines which quarter a disbursement is applied to (the number of days is configurable)
-  - See [What Quarter a Disbursement Applies To](#what-quarter-a-disbursement-applies-to) for some reasoning on this, was a little confused by some of the ambiguous wording.
+- Disbursements are applied to a quarter using `payment_made - 28 days` ([reasoning](#what-quarter-a-disbursement-applies-to))
+- All money values are stored/manipulated internally as integer "cents"
+  - When floating point operations are used, they are rounded to the nearest whole number, then converted back to an int.
+  - Money values are converted to dollars on output.
+  - Added the `.money` custom accessors to streamline this a bit
+- Super is calculated using the total OTE for the quarter (rather than individually for each payslip)
+  - This could produce different results to calculating per payslip, due to rounding
+  - However, language of problem implies we only care about the quarter's total
+- Tests! Ran out of time to finish them, currently only `YearQuarter` is tested (almost trivial)
+
+### `SuperData`
+Object that holds disbursement and payment data
+- Convinent short-hand to bundle both sets of data together, and indicate intent with type hints
+- Would ideally implement some validators at the class level, to enforce structure of each dataframe (i.e. enforcing that all `payment` data contains an `employee_code`)
+- Thought here is that you could implement additional parsers, and as long as they return a validated `SuperData` object then it can be used by the rest of the pipeline without any changes.
 
 
 ## Pandas Extensions - Custom Accessors
-Honestly just an experiment, implemented additonal pandas accessors using the extensions api.
+Implemented additonal pandas accessors. Seems slightly more convinient than applying lambdas
 
-Seems slightly more convinient than applying lambdas
+Honestly, just wanted to try it after reading [this page](https://pandas.pydata.org/docs/development/extending.html). 
 
 ### Custom Series Accessors
 - `.interval` -> Allows access to some `pd.Interval` attributes
@@ -73,7 +86,7 @@ Seems slightly more convinient than applying lambdas
 ### Custom Series Accessors
 - `.money` -> Currently only used for formatting the cents to dollar strings for the whole dataframe
 
-## Reasoning/Notes
+## Misc Notes
 
 ### What Quarter a Disbursement Applies To
 - The phrase "...must pay their staff 9.5% of pay codes treated as OTE **within** 28 days" implies only a **maximum** time period between 'earned' super and 'disbursed' super.
