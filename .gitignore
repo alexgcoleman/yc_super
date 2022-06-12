@@ -132,3 +132,4 @@ dmypy.json
 .DS_Store
 data/.~lock.*.xlsx#
 data/.~lock.*.csv#
+yc_super_audit*.csv

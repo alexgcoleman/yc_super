@@ -44,6 +44,6 @@ def parse(raw_disburs: pd.DataFrame, quarter_fn: Callable = get_quarter_from_pay
     disburs[ts_cols] = disburs[ts_cols].apply(pd.to_datetime)
 
     disburs['quarter'] = disburs.pipe(quarter_fn)
-    disburs['amount'] = disburs['amount'].money.dollars_to_cents
+    disburs['amount'] = disburs['amount'].money.d_to_c
 
     return disburs
