@@ -2,8 +2,7 @@ from __future__ import annotations
 from yc_super.yearquarter import YearQuarter
 import pandas as pd
 
-
-SUPER_PERC = 0.095
+SUPER_PERC = 0.095  # TODO: make this a config file
 
 
 class SuperData:
@@ -69,7 +68,7 @@ class SuperData:
             .agg(ote=('amount', 'sum'))
         )
 
-        ote['payable'] = ote['ote'] * self.super_perc
+        ote['payable'] = (ote['ote'] * self.super_perc).money.round_cents
 
         return ote
 
@@ -94,6 +93,7 @@ class SuperData:
                  .join(self.disbursed_per_emp_quarter(), how='outer')
                  .join(self.withheld_per_emp_quarter(), how='outer')
                  .fillna(0)
+                 .apply(lambda s: s.money.round_cents)
                  )
 
         audit['payable-withheld'] = audit['payable'] - audit['withheld']
