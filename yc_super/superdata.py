@@ -60,7 +60,7 @@ class SuperData:
             .agg(disbursed=('amount', 'sum'))
         )
 
-    def ote_and_entitled_super_per_emp_quarter(self) -> pd.DataFrame:
+    def ote_and_payable_super_per_emp_quarter(self) -> pd.DataFrame:
         """Sum of the OTE earned per employee per quarter"""
         ote = (
             self.payments
@@ -69,7 +69,7 @@ class SuperData:
             .agg(ote=('amount', 'sum'))
         )
 
-        ote['entitled'] = ote['ote'] * self.super_perc
+        ote['payable'] = ote['ote'] * self.super_perc
 
         return ote
 
@@ -81,22 +81,22 @@ class SuperData:
 
         Fields:
           - ote : total Ordinary time earnings
-          - entitled: total entitled super (ote * super_perc)
+          - payable: total payable super (ote * super_perc)
           - withheld: total withheld super
           - disbursed: total disbursed super
 
         Additional Delta fields for auditing:
-          - entitled-withheld: +'ve = entitled more than withheld
-          - entitled-disbursed : +'ve = entitled more than disbursed
+          - payable-withheld: +'ve = payable more than withheld
+          - payable-disbursed : +'ve = payable more than disbursed
           - withheld-disbursed: +'ve = withheld more than disbursed 
         """
-        audit = (self.ote_and_entitled_super_per_emp_quarter()
+        audit = (self.ote_and_payable_super_per_emp_quarter()
                  .join(self.disbursed_per_emp_quarter(), how='outer')
                  .join(self.withheld_per_emp_quarter(), how='outer')
                  .fillna(0)
                  )
 
-        audit['entitled-withheld'] = audit['entitled'] - audit['withheld']
-        audit['entitled-disbursed'] = audit['entitled'] - audit['disbursed']
+        audit['payable-withheld'] = audit['payable'] - audit['withheld']
+        audit['payable-disbursed'] = audit['payable'] - audit['disbursed']
         audit['withheld-disbursed'] = audit['withheld'] - audit['disbursed']
         return audit
