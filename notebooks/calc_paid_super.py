@@ -11,20 +11,10 @@ from pathlib import Path
 
 DATA_PATH = Path('data', 'Sample Super Data.xlsx')
 EXAMPLE_PATH = Path('data', 'example.xlsx')
-
-super_file = EXAMPLE_PATH
-
 SUPER_PERC = 0.095
 
-super_data = read_combined_file(super_file)
+super_data = read_combined_file(EXAMPLE_PATH)
+audit = super_data.audit_super_emp_quarter()
 
-# %%
-super_data.employees
-
-# %%
-YearQuarter(year=2022, quarter=1)
-# %%
-super_data.get_disbursments_for_quarter(
-    YearQuarter(year=2022, quarter=2)
-)
+audit
 # %%
