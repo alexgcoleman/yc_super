@@ -25,7 +25,13 @@ For a company to correctly pay super for an employee they must pay their staff 9
   - `pay_period_to` and `pay_period_from`
 
 - The columns `pay_period_from` and `pay_period_to` represent a continous timespan series, which means a single payslip would match fall within only one disbursment pay period span.
+  - *Update* This rule is broken for employee `2355`, who has an additional disbursement, with a pay period that is encompassed by its surrounding disbursements.
 
-- The phrase "...must pay their staff 9.5% of pay codes treated as OTE **within** 28 days" implies only a maximum time period between 'earned' super and 'disbursed' super.
 
-- However example given as 
+### What Quarter a Disbursement Applies to
+- The phrase "...must pay their staff 9.5% of pay codes treated as OTE **within** 28 days" implies only a **maximum** time period between 'earned' super and 'disbursed' super.
+  - i.e. a Disbursement payed on the 22nd of January could:
+    - Apply to Q4 the previous year (within 28 days of end of the quarter)
+    - Apply to Q1 of the current year (if a payslip came out before 22 of Jan)
+
+- However the phrase "Super earned between 1st Jan and the 31 st of March (Q1) will need to be paid/Disbursed between the 29th Jan - 28th of Apr." indicates a hard limit.
