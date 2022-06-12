@@ -1,7 +1,6 @@
 from pathlib import Path
 from yc_super.superdata import SuperData
 from yc_super.yearquarter import YearQuarter
-
 import pandas as pd
 
 WITHHELD_SUPER_CODE = 'P001 - Co. Super 9.5%'
@@ -44,6 +43,7 @@ def parse_payments(raw_pay_codes: pd.DataFrame, raw_pay_slips: pd.DataFrame) -> 
 
     payments = payments.drop(columns=['_merge', 'ote_treament'])
     payments['quarter'] = payments['end'].apply(YearQuarter)
+    payments['amount'] = payments['amount'].money.dollars_to_cents
 
     return payments
 
@@ -69,6 +69,8 @@ def parse_disburs(raw_disburs: pd.DataFrame) -> pd.DataFrame:
 
     disburs['quarter'] = (disburs['payment_made'] -
                           WINDOW_TO_PAY).apply(YearQuarter)
+
+    disburs['amount'] = disburs['amount'].money.dollars_to_cents
 
     return disburs
 
